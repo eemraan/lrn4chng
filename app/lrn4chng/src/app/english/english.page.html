@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/language"></ion-back-button>
+    </ion-buttons>
+    <ion-title>English 🇺🇸</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="email-section">
+    <h1>Welcome! 👋</h1>
+    <p>Enter your email to get started with your learning journey.</p>
+
+    <ion-item class="email-field" lines="none">
+      <ion-input
+        type="email"
+        inputmode="email"
+        label="Email"
+        labelPlacement="floating"
+        placeholder="you&#64;example.com"
+        [(ngModel)]="email"
+        [disabled]="submitting">
+      </ion-input>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      size="large"
+      class="submit-button"
+      [disabled]="!emailValid || submitting"
+      (click)="submitEmail()">
+      @if (submitting) {
+        <ion-spinner name="crescent"></ion-spinner>
+      } @else {
+        Continue 🚀
+      }
+    </ion-button>
+  </div>
+</ion-content>

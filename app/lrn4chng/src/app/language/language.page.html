@@ -1,0 +1,49 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ t('title') }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="language-container">
+  <div class="language-header">
+    <h1>{{ t('title') }}</h1>
+    <p class="subtitle">{{ t('subtitle') }}</p>
+  </div>
+
+  <ion-list lines="none">
+    <ion-radio-group [value]="currentLanguage">
+
+      <ion-item class="language-card" [class.selected]="currentLanguage === 'en'" (click)="selectLanguage('en')" button>
+        <ion-label>
+          <div class="language-main">{{ t('english') }}</div>
+          <div class="language-note">{{ t('englishNote') }}</div>
+        </ion-label>
+        <ion-radio value="en" slot="end"></ion-radio>
+      </ion-item>
+
+      <ion-item class="language-card" [class.selected]="currentLanguage === 'fr'" (click)="selectLanguage('fr')" button>
+        <ion-label>
+          <div class="language-main">{{ t('french') }}</div>
+          <div class="language-note">{{ t('frenchNote') }}</div>
+        </ion-label>
+        <ion-radio value="fr" slot="end"></ion-radio>
+      </ion-item>
+
+    </ion-radio-group>
+  </ion-list>
+
+  @if (selected) {
+    <ion-button
+      expand="block"
+      size="large"
+      class="submit-button"
+      (click)="submit()">
+      {{ t('submit') }}
+    </ion-button>
+  }
+</div>
+</ion-content>

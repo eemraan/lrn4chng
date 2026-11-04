@@ -1,0 +1,152 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>About You</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="demographics-wrapper">
+
+    <!-- Hero Header -->
+    <div class="hero-card">
+      <div class="hero-badge">Step 1 of 3</div>
+      <h2>Tell Us About Yourself 👤</h2>
+      <p>This information helps us tailor the learning experience to your background.</p>
+    </div>
+
+    <form [formGroup]="demoForm" (ngSubmit)="onSubmit()" class="demo-form">
+
+      <!-- Basic Profile Card -->
+      <ion-card class="form-card">
+        <ion-card-header>
+          <ion-card-title>Personal Details</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <!-- Age & Native Country Row -->
+          <div class="form-row">
+            <ion-item class="custom-input" lines="none">
+              <ion-label position="stacked">Age <span class="req">*</span></ion-label>
+              <ion-input type="number" formControlName="age" placeholder="e.g. 24" min="10" max="100"></ion-input>
+            </ion-item>
+
+            <ion-item class="custom-input" lines="none">
+              <ion-label position="stacked">Native Country <span class="req">*</span></ion-label>
+              <ion-select formControlName="nativeCountry" placeholder="Select" interface="action-sheet">
+                <ion-select-option *ngFor="let country of countries" [value]="country">
+                  {{ country }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+
+          <!-- Le Mans University -->
+          <div class="input-group ion-margin-top">
+            <label class="group-label">Are you from Le Mans University? <span class="req">*</span></label>
+            <ion-segment formControlName="isLeMansStudent" color="primary" class="custom-segment">
+              <ion-segment-button [value]="true">
+                <ion-label>✅ Yes</ion-label>
+              </ion-segment-button>
+              <ion-segment-button [value]="false">
+                <ion-label>❌ No</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+
+          <!-- Gender -->
+          <div class="input-group ion-margin-top">
+            <label class="group-label">Gender <span class="req">*</span></label>
+            <ion-segment formControlName="gender" color="primary" class="custom-segment" scrollable="true">
+              <ion-segment-button value="male">
+                <ion-label>Male</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="female">
+                <ion-label>Female</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="other">
+                <ion-label>Other</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="prefer_not_to_say">
+                <ion-label>Prefer not to say</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Background & Major/Profession -->
+      <ion-card class="form-card">
+        <ion-card-header>
+          <ion-card-title>Occupation & Background</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <!-- Status -->
+          <div class="input-group">
+            <label class="group-label">Current Status <span class="req">*</span></label>
+            <ion-segment formControlName="status" color="primary" class="custom-segment">
+              <ion-segment-button value="student">
+                <ion-label>🎓 Student</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="professional">
+                <ion-label>💼 Professional</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+
+          <!-- Field of Study / Profession -->
+          <ion-item class="custom-input ion-margin-top" lines="none">
+            <ion-label position="stacked">
+              {{ demoForm.value.status === 'student' ? 'Study Major / Field' : 'Profession / Industry' }} 
+              <span class="req">*</span>
+            </ion-label>
+            <ion-input 
+              type="text" 
+              formControlName="majorOrProfession" 
+              [placeholder]="demoForm.value.status === 'student' ? 'e.g. Computer Science, Business' : 'e.g. Software Engineer, Teacher'">
+            </ion-input>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- GenAI Familiarity Card (5-Point Likert Scale) -->
+      <ion-card class="form-card">
+        <ion-card-header>
+          <ion-card-title>Generative AI Familiarity 🤖</ion-card-title>
+          <ion-card-subtitle>How familiar are you with tools like ChatGPT, Claude, etc.?</ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="likert-container">
+            <div 
+              *ngFor="let option of likertOptions" 
+              class="likert-pill"
+              [class.selected]="demoForm.value.genAiFamiliarity === option.value"
+              (click)="selectLikert(option.value)">
+              
+              <div class="pill-number">{{ option.value }}</div>
+              <div class="pill-text">
+                <strong>{{ option.label }}</strong>
+                <span>{{ option.description }}</span>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Submit Button -->
+      <div class="action-footer">
+        <ion-button 
+          expand="block" 
+          color="primary" 
+          shape="round" 
+          type="submit"
+          [disabled]="demoForm.invalid || isSubmitting">
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+          <span *ngIf="!isSubmitting">Continue to Instructions 🚀</span>
+        </ion-button>
+      </div>
+
+    </form>
+  </div>
+</ion-content>

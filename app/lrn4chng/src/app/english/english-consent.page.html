@@ -1,0 +1,19 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/english/page"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Consent</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="consent-section">
+    <h1>Consent 📝</h1>
+    <p>Please review and accept the terms to continue.</p>
+
+    @if (uid) {
+      <p class="uid-note">Session ID: {{ uid }}</p>
+    }
+  </div>
+</ion-content>

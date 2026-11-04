@@ -1,0 +1,80 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Pretest Result & Verification</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="split-container">
+    
+    <!-- Top Half: Received Reference Image -->
+    <div class="half-section top-half">
+      <div class="section-header">
+        <h2>Reference Image</h2>
+      </div>
+
+      <div class="image-wrapper" *ngIf="receivedImageUrl; else noImage">
+        <img [src]="receivedImageUrl" alt="Pretest Reference Image" />
+      </div>
+
+      <ng-template #noImage>
+        <div class="placeholder-box">
+          <ion-icon name="image-outline"></ion-icon>
+          <p>No reference image URL received.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Bottom Half: Camera Capture -->
+    <div class="half-section bottom-half">
+      <div class="section-header">
+        <h2>Take Verification Photo</h2>
+        <p>Please snap a clear picture to proceed.</p>
+      </div>
+
+      <!-- Preview Captured Photo if available -->
+      <div class="image-wrapper" *ngIf="capturedPhotoWebPath; else cameraPrompt">
+        <img [src]="capturedPhotoWebPath" alt="Captured Photo" />
+      </div>
+
+      <!-- Camera Icon Prompt -->
+      <ng-template #cameraPrompt>
+        <div class="camera-trigger" (click)="takePhoto()">
+          <div class="icon-circle">
+            <ion-icon name="camera-outline"></ion-icon>
+          </div>
+          <p>Tap icon to open camera</p>
+        </div>
+      </ng-template>
+
+      <!-- Initial Upload & Retake Action Buttons -->
+      <div class="action-bar" *ngIf="capturedPhotoWebPath && !uploadSuccess">
+        <ion-button fill="outline" color="medium" (click)="takePhoto()" [disabled]="isUploading">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Retake
+        </ion-button>
+
+        <ion-button color="success" (click)="uploadPhoto()" [disabled]="isUploading">
+          <ion-spinner name="crescent" *ngIf="isUploading"></ion-spinner>
+          <ion-icon name="cloud-upload-outline" slot="start" *ngIf="!isUploading"></ion-icon>
+          {{ isUploading ? 'Uploading...' : 'Send to Server' }}
+        </ion-button>
+      </div>
+
+      <!-- Success Confirmation Banner & Continue Button -->
+      <div class="success-box" *ngIf="uploadSuccess">
+        <div class="success-message">
+          <ion-icon name="checkmark-circle" color="success"></ion-icon>
+          <span>Image uploaded successfully!</span>
+        </div>
+
+        <ion-button expand="block" color="primary" class="continue-btn" (click)="goToNextPage()">
+          Continue to Next Step
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>

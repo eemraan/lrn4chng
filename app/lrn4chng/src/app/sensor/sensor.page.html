@@ -1,0 +1,106 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Sensor Station
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+
+  <ion-button
+    expand="block"
+    *ngIf="!connected"
+    (click)="connect()">
+
+    Connect to ESP32
+
+  </ion-button>
+
+
+  <ion-button
+    expand="block"
+    color="danger"
+    *ngIf="connected"
+    (click)="disconnect()">
+
+    Disconnect
+
+  </ion-button>
+
+
+  <ion-card *ngIf="sensorData">
+
+    <ion-card-header>
+
+      <ion-card-title>
+        Sensor Data
+      </ion-card-title>
+
+    </ion-card-header>
+
+
+    <ion-card-content>
+
+      <ion-list>
+
+        <ion-item>
+          <ion-label>
+            Temperature
+          </ion-label>
+
+          <ion-note slot="end">
+            {{ sensorData.temperature | number:'1.1-2' }} °C
+          </ion-note>
+        </ion-item>
+
+
+        <ion-item>
+          <ion-label>
+            Humidity
+          </ion-label>
+
+          <ion-note slot="end">
+            {{ sensorData.humidity | number:'1.1-2' }} %
+          </ion-note>
+        </ion-item>
+
+
+        <ion-item>
+          <ion-label>
+            CO₂
+          </ion-label>
+
+          <ion-note slot="end">
+            {{ sensorData.co2 }} ppm
+          </ion-note>
+        </ion-item>
+
+
+        <ion-item>
+          <ion-label>
+            Light
+          </ion-label>
+
+          <ion-note slot="end">
+            {{ sensorData.light | number:'1.1-2' }} lux
+          </ion-note>
+        </ion-item>
+
+      </ion-list>
+
+    </ion-card-content>
+
+  </ion-card>
+
+
+  <ion-card *ngIf="!sensorData && connected">
+
+    <ion-card-content>
+      Waiting for sensor data...
+    </ion-card-content>
+
+  </ion-card>
+
+</ion-content>

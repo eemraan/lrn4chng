@@ -1,0 +1,290 @@
+<!-- lrn4chng/src/app/english-learn/english-learn.page.html -->
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>{{ questTitle }}</ion-title>
+  </ion-toolbar>
+  <ion-progress-bar *ngIf="hasStarted && questLoaded" [value]="progressPercent / 100"></ion-progress-bar>
+</ion-header>
+
+<ion-content #questContent class="quest-content" [scrollY]="true">
+
+  <!-- STEP 0: START LANDING SCREEN (BEFORE API REQUEST) -->
+  <div *ngIf="!hasStarted" class="start-container ion-text-center ion-padding">
+    <ion-card class="start-card ion-padding">
+      <div class="start-icon ion-margin-bottom">
+        <ion-icon name="compass-outline" color="primary" size="large"></ion-icon>
+      </div>
+      <ion-card-header>
+        <ion-card-title>{{ questTitle }}</ion-card-title>
+        <ion-card-subtitle class="ion-margin-top">{{ questDescription }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content class="ion-margin-top">
+        <ion-button expand="block" size="large" color="primary" (click)="startQuest()">
+          Let's Start
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- STEP 1: LOADING STATE (WHILE API CALL IS IN FLIGHT) -->
+  <div *ngIf="hasStarted && isLoadingQuest" class="loading-state ion-text-center ion-padding ion-margin-top">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p class="ion-margin-top">Requesting quest from API...</p>
+  </div>
+
+  <!-- STEP 2: ERROR STATE -->
+  <div *ngIf="hasStarted && !isLoadingQuest && questLoadError" class="error-state ion-text-center ion-padding">
+    <ion-icon name="alert-circle-outline" color="danger" size="large"></ion-icon>
+    <p>{{ questLoadError }}</p>
+    <ion-button color="primary" fill="outline" (click)="loadQuestData()">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      Retry
+    </ion-button>
+  </div>
+
+  <!-- STEP 3: QUEST CONTENT (ONE SECTION PER SCREEN, SNAP SCROLLING) -->
+  <div *ngIf="hasStarted && !isLoadingQuest && questLoaded" class="snap-container">
+
+    <div class="step-tracker">
+      <span>Step {{ currentStepNumber }} of {{ totalSteps }}</span>
+    </div>
+
+    <!-- Section 1: always visible -->
+    <section class="screen-section">
+      <ion-card class="quest-card">
+        <ion-card-header>
+          <div class="tag-badge" [class]="section1.tag.cssClass">
+            <ion-icon [name]="section1.tag.icon"></ion-icon>
+            <span>{{ section1.tag.label }}</span>
+          </div>
+          <ion-card-title>{{ section1.question }}</ion-card-title>
+          <ion-card-subtitle *ngIf="section1.subtitle">{{ section1.subtitle }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="button-group">
+            <ion-button
+              *ngFor="let act of section1.binaryActions"
+              [fill]="section1Answered && act.value === 'yes' ? 'solid' : 'outline'"
+              (click)="answerSection1(act.value)">
+              <span class="emoji-icon">{{ act.icon }}</span> {{ act.text }}
+            </ion-button>
+          </div>
+
+          <div *ngIf="section1Answered" class="action-footer ion-margin-top">
+            <ion-button expand="block" color="success" (click)="scrollToSection(section2Ref)">
+              {{ section1.continueText }}
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <!-- Section 2 -->
+    <section #section2Ref class="screen-section" *ngIf="section1Answered">
+      <ion-card class="quest-card">
+        <ion-card-header>
+          <div class="tag-badge" [class]="section2.tag.cssClass">
+            <ion-icon [name]="section2.tag.icon"></ion-icon>
+            <span>{{ section2.tag.label }}</span>
+          </div>
+          <ion-card-title>{{ section2.question }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item
+              *ngFor="let opt of section2.options; let i = index"
+              button
+              [class.selected]="selectedSection2Option === i"
+              (click)="selectSection2Option(i)">
+              <ion-badge slot="start">{{ getOptionBadge(section2, i) }}</ion-badge>
+              <ion-label class="ion-text-wrap">{{ opt.text }}</ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div *ngIf="selectedSection2Option !== null" class="feedback-box ion-margin-top">
+            <ion-text [color]="isSection2Correct ? 'success' : 'danger'">
+              <h4>{{ isSection2Correct ? section2.feedback?.correct?.header : section2.feedback?.incorrect?.header }}</h4>
+              <p>{{ isSection2Correct ? section2.feedback?.correct?.message : section2.feedback?.incorrect?.message }}</p>
+            </ion-text>
+            <ion-button *ngIf="isSection2Correct" expand="block" color="success" (click)="scrollToSection(section3Ref)">
+              {{ section2.continueText }}
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <!-- Section 3 -->
+    <section #section3Ref class="screen-section" *ngIf="isSection2Correct">
+      <ion-card class="quest-card">
+        <ion-card-header>
+          <div class="tag-badge" [class]="section3.tag.cssClass">
+            <ion-icon [name]="section3.tag.icon"></ion-icon>
+            <span>{{ section3.tag.label }}</span>
+          </div>
+          <ion-card-title>{{ section3.question }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item
+              *ngFor="let opt of section3.options; let i = index"
+              button
+              [class.selected]="selectedSection3Option === i"
+              (click)="selectSection3Option(i)">
+              <ion-badge slot="start">{{ getOptionBadge(section3, i) }}</ion-badge>
+              <ion-label class="ion-text-wrap">{{ opt.text }}</ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div *ngIf="selectedSection3Option !== null" class="feedback-box ion-margin-top">
+            <ion-text [color]="isSection3Correct ? 'success' : 'danger'">
+              <h4>{{ isSection3Correct ? section3.feedback?.correct?.header : section3.feedback?.incorrect?.header }}</h4>
+              <p>{{ isSection3Correct ? section3.feedback?.correct?.message : section3.feedback?.incorrect?.message }}</p>
+            </ion-text>
+            <ion-button *ngIf="isSection3Correct" expand="block" color="success" (click)="scrollToSection(section4Ref)">
+              {{ section3.continueText }}
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <!-- Section 4 -->
+    <section #section4Ref class="screen-section" *ngIf="isSection3Correct">
+      <ion-card class="quest-card">
+        <ion-card-header>
+          <div class="tag-badge" [class]="section4.tag.cssClass">
+            <ion-icon [name]="section4.tag.icon"></ion-icon>
+            <span>{{ section4.tag.label }}</span>
+          </div>
+          <ion-card-title>{{ section4.question }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item
+              *ngFor="let opt of section4.options; let i = index"
+              button
+              [class.selected]="selectedSection4Option === i"
+              (click)="selectSection4Option(i)">
+              <ion-badge slot="start">{{ getOptionBadge(section4, i) }}</ion-badge>
+              <ion-label class="ion-text-wrap">{{ opt.text }}</ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div *ngIf="selectedSection4Option !== null" class="feedback-box ion-margin-top">
+            <ion-text [color]="isSection4Correct ? 'success' : 'danger'">
+              <h4>{{ isSection4Correct ? section4.feedback?.correct?.header : section4.feedback?.incorrect?.header }}</h4>
+              <p>{{ isSection4Correct ? section4.feedback?.correct?.message : section4.feedback?.incorrect?.message }}</p>
+            </ion-text>
+            <ion-button *ngIf="isSection4Correct" expand="block" color="success" (click)="scrollToSection(section5Ref)">
+              {{ section4.continueText }}
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <!-- Section 5 -->
+    <section #section5Ref class="screen-section" *ngIf="isSection4Correct">
+      <ion-card class="quest-card">
+        <ion-card-header>
+          <div class="tag-badge" [class]="section5.tag.cssClass">
+            <ion-icon [name]="section5.tag.icon"></ion-icon>
+            <span>{{ section5.tag.label }}</span>
+          </div>
+          <ion-card-title>{{ section5.question }}</ion-card-title>
+          <ion-card-subtitle>{{ section5.subtitle }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-textarea
+            [(ngModel)]="section5Text"
+            [placeholder]="section5.placeholder"
+            rows="4"
+            fill="outline">
+          </ion-textarea>
+          <div class="word-counter ion-margin-top">
+            <ion-note [color]="isSection5Valid ? 'success' : 'medium'">
+              Word count: {{ section5WordCount }} / {{ section5.minWords || 10 }}
+            </ion-note>
+          </div>
+          <ion-button
+            *ngIf="isSection5Valid"
+            expand="block"
+            color="success"
+            class="ion-margin-top"
+            (click)="scrollToSection(section6Ref)">
+            Continue to Question 6
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <!-- Section 6 -->
+    <section #section6Ref class="screen-section" *ngIf="isSection5Valid">
+      <ion-card class="quest-card">
+        <ion-card-header>
+          <div class="tag-badge" [class]="section6.tag.cssClass">
+            <ion-icon [name]="section6.tag.icon"></ion-icon>
+            <span>{{ section6.tag.label }}</span>
+          </div>
+          <ion-card-title>{{ section6.question }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item
+              *ngFor="let opt of section6.options; let i = index"
+              button
+              [class.selected]="selectedSection6Option === i"
+              (click)="selectSection6Option(i)">
+              <ion-badge slot="start">{{ getOptionBadge(section6, i) }}</ion-badge>
+              <ion-label class="ion-text-wrap">{{ opt.text }}</ion-label>
+            </ion-item>
+          </ion-list>
+
+          <div *ngIf="selectedSection6Option !== null" class="feedback-box ion-margin-top">
+            <ion-text [color]="isSection6Correct ? 'success' : 'danger'">
+              <h4>{{ isSection6Correct ? section6.feedback?.correct?.header : section6.feedback?.incorrect?.header }}</h4>
+              <p>{{ isSection6Correct ? section6.feedback?.correct?.message : section6.feedback?.incorrect?.message }}</p>
+            </ion-text>
+            <ion-button *ngIf="isSection6Correct" expand="block" color="success" (click)="scrollToSection(section7Ref)">
+              Continue to Final Question
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+    <!-- Section 7 -->
+    <section #section7Ref class="screen-section" *ngIf="isSection6Correct">
+      <ion-card class="quest-card">
+        <ion-card-header>
+          <div class="tag-badge" [class]="section7.tag.cssClass">
+            <ion-icon [name]="section7.tag.icon"></ion-icon>
+            <span>{{ section7.tag.label }}</span>
+          </div>
+          <ion-card-title>{{ section7.question }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="button-group">
+            <ion-button
+              *ngFor="let act of section7.binaryActions"
+              [fill]="section7Answer === act.value ? 'solid' : 'outline'"
+              (click)="answerSection7(act.value)">
+              <span class="emoji-icon">{{ act.icon }}</span> {{ act.text }}
+            </ion-button>
+          </div>
+
+          <div *ngIf="isSection7Answered" class="action-footer ion-margin-top">
+            <ion-button expand="block" color="primary" (click)="finishQuest()">
+              {{ section7.finishText || 'Finish & Complete Quest' }}
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </section>
+
+  </div>
+
+</ion-content>

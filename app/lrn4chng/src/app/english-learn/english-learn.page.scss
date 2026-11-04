@@ -1,0 +1,488 @@
+/* =========================================
+   1. GENERAL PAGE STYLING
+========================================= */
+
+:host {
+  --quest-primary: #3867d6;
+  --quest-primary-light: #edf3ff;
+  --quest-success: #16a085;
+  --quest-background: #f5f7fb;
+  --quest-card: #ffffff;
+  --quest-text: #263449;
+  --quest-muted: #718096;
+}
+
+ion-content.quest-content {
+  --background: var(--quest-background);
+}
+
+/* Enable vertical scroll snapping on Ionic's
+   actual scroll container */
+
+ion-content.quest-content::part(scroll) {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scroll-padding-top: 48px;
+  overscroll-behavior-y: contain;
+}
+
+/* =========================================
+   2. QUEST CONTAINER
+========================================= */
+
+.snap-container {
+  width: 100%;
+  min-height: 100%;
+  padding: 0 16px 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   3. STEP TRACKER
+========================================= */
+
+.step-tracker {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--quest-background);
+
+  color: var(--quest-muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+/* =========================================
+   4. FULL-SCREEN SECTIONS
+========================================= */
+
+.screen-section {
+  min-height: calc(100dvh - 104px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px 0;
+
+  box-sizing: border-box;
+
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* =========================================
+   5. QUESTION CARDS
+========================================= */
+
+.quest-card {
+  width: 100%;
+  max-width: 650px;
+
+  margin: 0 auto;
+
+  background: var(--quest-card);
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 4px 20px rgba(35, 55, 90, 0.06),
+    0 1px 4px rgba(35, 55, 90, 0.04);
+
+  border: 1px solid rgba(220, 227, 238, 0.8);
+
+  overflow: hidden;
+}
+
+/* Card header */
+
+.quest-card ion-card-header {
+  padding: 26px 24px 16px;
+}
+
+/* Question title */
+
+.quest-card ion-card-title {
+  color: var(--quest-text);
+
+  font-size: clamp(21px, 4vw, 27px);
+  font-weight: 700;
+
+  line-height: 1.4;
+
+  margin-top: 18px;
+}
+
+/* Subtitle */
+
+.quest-card ion-card-subtitle {
+  color: var(--quest-muted);
+
+  font-size: 15px;
+  line-height: 1.6;
+
+  margin-top: 10px;
+}
+
+/* Card content */
+
+.quest-card ion-card-content {
+  padding: 12px 24px 26px;
+}
+
+/* =========================================
+   6. SECTION TAGS
+========================================= */
+
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  width: fit-content;
+
+  padding: 7px 13px;
+
+  border-radius: 50px;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+
+  background: var(--quest-primary-light);
+  color: var(--quest-primary);
+}
+
+.tag-badge ion-icon {
+  font-size: 16px;
+}
+
+/* =========================================
+   7. ANSWER BUTTONS
+========================================= */
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.button-group ion-button {
+  --border-radius: 13px;
+
+  --padding-top: 17px;
+  --padding-bottom: 17px;
+
+  --border-width: 1.5px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  min-height: 52px;
+
+  margin: 0;
+  text-transform: none;
+}
+
+/* Emoji inside answer buttons */
+
+.emoji-icon {
+  font-size: 19px;
+  margin-right: 9px;
+}
+
+/* =========================================
+   8. MULTIPLE CHOICE OPTIONS
+========================================= */
+
+.quest-card ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+.quest-card ion-item {
+  --background: #ffffff;
+  --border-color: #e7ebf2;
+
+  --border-width: 1px;
+  --border-style: solid;
+
+  --border-radius: 13px;
+
+  --padding-start: 14px;
+  --inner-padding-end: 12px;
+
+  margin-bottom: 12px;
+
+  border: 1px solid #e7ebf2;
+  border-radius: 13px;
+
+  min-height: 62px;
+
+  transition: all 0.2s ease;
+}
+
+/* Option badge */
+
+.quest-card ion-item ion-badge {
+  --background: #edf2fa;
+  --color: #52647e;
+
+  font-size: 13px;
+
+  min-width: 28px;
+  min-height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+}
+
+/* Option text */
+
+.quest-card ion-item ion-label {
+  color: var(--quest-text);
+
+  font-size: 14px;
+  font-weight: 500;
+
+  line-height: 1.5;
+}
+
+/* Selected answer */
+
+.quest-card ion-item.selected {
+  --background: #edf3ff;
+
+  border: 1.5px solid var(--quest-primary);
+  box-shadow: 0 2px 8px rgba(56, 103, 214, 0.08);
+}
+
+.quest-card ion-item.selected ion-badge {
+  --background: var(--quest-primary);
+  --color: #ffffff;
+}
+
+/* =========================================
+   9. FEEDBACK BOX
+========================================= */
+
+.feedback-box {
+  padding: 17px;
+
+  border-radius: 14px;
+
+  background: #f5f8fc;
+
+  border: 1px solid #e8edf5;
+}
+
+.feedback-box h4 {
+  font-size: 16px;
+  font-weight: 700;
+
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.feedback-box p {
+  font-size: 14px;
+  line-height: 1.6;
+
+  color: var(--quest-muted);
+
+  margin-bottom: 0;
+}
+
+.feedback-box ion-button {
+  margin-top: 16px;
+
+  --border-radius: 12px;
+
+  font-weight: 600;
+  text-transform: none;
+}
+
+/* =========================================
+   10. CONTINUE BUTTONS
+========================================= */
+
+.action-footer {
+  margin-top: 22px;
+}
+
+.action-footer ion-button,
+.quest-card ion-card-content > ion-button {
+  --border-radius: 13px;
+
+  min-height: 50px;
+
+  font-weight: 700;
+  font-size: 15px;
+
+  text-transform: none;
+}
+
+/* =========================================
+   11. TEXTAREA / REFLECTION SECTION
+========================================= */
+
+.quest-card ion-textarea {
+  --background: #f9fafc;
+
+  --border-radius: 13px;
+
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 14px;
+
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.word-counter {
+  text-align: right;
+  font-size: 13px;
+}
+
+/* =========================================
+   12. START SCREEN
+========================================= */
+
+.start-container {
+  min-height: 85dvh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--quest-background);
+}
+
+.start-card {
+  width: 100%;
+  max-width: 480px;
+
+  border-radius: 24px;
+
+  background: white;
+
+  box-shadow: 0 8px 30px rgba(35, 55, 90, 0.08);
+}
+
+.start-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 76px;
+  height: 76px;
+
+  margin: 10px auto;
+
+  border-radius: 22px;
+
+  background: var(--quest-primary-light);
+}
+
+.start-icon ion-icon {
+  font-size: 38px;
+}
+
+.start-card ion-card-title {
+  font-size: 26px;
+  font-weight: 700;
+
+  color: var(--quest-text);
+}
+
+.start-card ion-card-subtitle {
+  font-size: 15px;
+  line-height: 1.7;
+
+  color: var(--quest-muted);
+}
+
+.start-card ion-button {
+  --border-radius: 13px;
+
+  min-height: 52px;
+
+  font-weight: 700;
+  text-transform: none;
+}
+
+/* =========================================
+   13. LOADING STATE
+========================================= */
+
+.loading-state {
+  padding-top: 100px;
+}
+
+.loading-state ion-spinner {
+  transform: scale(1.5);
+}
+
+/* =========================================
+   14. MOBILE RESPONSIVENESS
+========================================= */
+
+@media (max-width: 576px) {
+
+  .snap-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .screen-section {
+    min-height: calc(100dvh - 104px);
+    padding: 14px 0;
+  }
+
+  .quest-card {
+    border-radius: 19px;
+  }
+
+  .quest-card ion-card-header {
+    padding: 22px 19px 12px;
+  }
+
+  .quest-card ion-card-content {
+    padding: 12px 19px 22px;
+  }
+
+  .quest-card ion-card-title {
+    font-size: 22px;
+  }
+
+  .quest-card ion-item {
+    min-height: 58px;
+  }
+
+}
+
+/* =========================================
+   15. ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  ion-content.quest-content::part(scroll) {
+    scroll-behavior: auto;
+  }
+
+  .quest-card ion-item {
+    transition: none;
+  }
+
+}

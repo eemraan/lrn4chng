@@ -1,0 +1,85 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>How It Works</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="instructions-wrapper">
+
+    <!-- Header Hero Banner -->
+    <div class="hero-card">
+      <div class="hero-badge">3 Steps Ahead</div>
+      <h2>Your Learning Journey</h2>
+      <p>Tap each step below to explore what you will be doing in this session.</p>
+    </div>
+
+    <!-- Interactive Progress Tracker -->
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>Exploration Progress</span>
+        <strong>{{ reviewedCount }} / {{ stages.length }} Reviewed</strong>
+      </div>
+      <ion-progress-bar 
+        [value]="reviewedCount / stages.length" 
+        [color]="allReviewed ? 'success' : 'primary'">
+      </ion-progress-bar>
+    </div>
+
+    <!-- Expandable Stage Cards -->
+    <div class="stages-list">
+      <div 
+        *ngFor="let stage of stages" 
+        class="stage-card" 
+        [class.is-expanded]="activeStageId === stage.id"
+        [class.is-reviewed]="stage.reviewed"
+        (click)="toggleStage(stage.id)">
+
+        <div class="stage-header">
+          <div class="stage-badge" [ngClass]="stage.color">
+            {{ stage.id }}
+          </div>
+
+          <div class="stage-title-group">
+            <h3>{{ stage.title }}</h3>
+            <p>{{ stage.subtitle }}</p>
+          </div>
+
+          <ion-icon 
+            [name]="activeStageId === stage.id ? 'chevron-up' : 'chevron-down'" 
+            class="chevron-icon">
+          </ion-icon>
+        </div>
+
+        <!-- Accordion Content -->
+        <div class="stage-body" *ngIf="activeStageId === stage.id">
+          <p class="stage-desc">{{ stage.description }}</p>
+          
+          <ul class="details-list">
+            <li *ngFor="let detail of stage.details">
+              <ion-icon name="checkmark-circle-outline" color="primary"></ion-icon>
+              <span>{{ detail }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-footer">
+      <p class="completion-hint" *ngIf="!allReviewed">
+        💡 Tap all 3 steps above to unlock the start button!
+      </p>
+
+      <ion-button 
+        expand="block" 
+        color="primary" 
+        shape="round"
+        [disabled]="!allReviewed"
+        (click)="startExperience()">
+        I'm Ready to Start 🚀
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

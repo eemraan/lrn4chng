@@ -1,0 +1,36 @@
+.email-section {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-top: 12vh;
+  text-align: center;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin: 0 0 32px 0;
+  }
+}
+
+.email-field {
+  --background: var(--ion-color-light);
+  --border-radius: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.submit-button {
+  --border-radius: 16px;
+  font-weight: 600;
+
+  ion-spinner {
+    width: 24px;
+    height: 24px;
+  }
+}

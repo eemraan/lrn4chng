@@ -1,0 +1,17 @@
+name: Mistral GLM
+version: 1.0.0
+schema: v1
+
+models:
+  - name: GLM 5.3 Flash
+    provider: openai
+    model: zai-glm-5-3-flash
+    apiBase: https://api.mistral.ai/v1
+    apiKey: mstrl_nZqz4MyP1ObyTC6P5G1IcbFJlu8EnYYM_4f4Vas
+    roles:
+      - chat
+      - edit
+    defaultCompletionOptions:
+      temperature: 0.7
+      maxTokens: 8096
+      stream: true

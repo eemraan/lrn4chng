@@ -1,0 +1,7 @@
+{
+  "name": "lrn4chng",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
