@@ -1,8 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-
+import { Observable, tap, catchError, throwError } from 'rxjs';
 
 export interface ConsentPayload {
   uid: string;
@@ -57,7 +55,6 @@ export interface UploadPhotoResponse {
 
 export interface QuestSectionOption {
   text: string;
-  isCorrect: boolean;
 }
 
 export interface QuestSectionTag {
@@ -74,10 +71,6 @@ export interface QuestSection {
   subtitle?: string;
   options?: QuestSectionOption[];
   binaryActions?: { value: 'yes' | 'no'; icon: string; text: string }[];
-  feedback?: {
-    correct: { header: string; message: string };
-    incorrect: { header: string; message: string };
-  };
   placeholder?: string;
   minWords?: number;
   continueText?: string;
@@ -86,16 +79,29 @@ export interface QuestSection {
   letterBadges?: boolean;
 }
 
-export interface QuestData {
+export interface SectionFetchResponse {
+  status: string;
   questTitle: string;
   totalSteps: number;
-  sections: QuestSection[];
+  section: QuestSection;
 }
 
-export interface QuestResponse {
+export interface FeedbackPayload {
+  uid: string;
+  sectionId: number;
+  timestamp: number;
+  clicksCount: number;
+  selectedOption?: number | string | null;
+  textInput?: string | null;
+  allResponses?: Record<string, any>;
+  language?: string;
+}
+
+export interface FeedbackResponse {
   status: string;
-  message?: string;
-  data?: QuestData;
+  isCorrect: boolean;
+  header: string;
+  message: string;
 }
 
 @Injectable({
@@ -103,26 +109,20 @@ export interface QuestResponse {
 })
 export class ApiService {
   private http = inject(HttpClient);
-
-  // Base API domain
   private readonly baseUrl = 'https://api.lrn4chng.site';
 
-  // 1. Submit Consent Data
   submitConsent(payload: ConsentPayload): Observable<ConsentResponse> {
     return this.http.post<ConsentResponse>(`${this.baseUrl}/consent`, payload);
   }
 
-  // 2. Submit Demographics Data
   submitDemographics(payload: DemographicsPayload): Observable<DemographicsResponse> {
     return this.http.post<DemographicsResponse>(`${this.baseUrl}/demographics`, payload);
   }
 
-  // 3. Submit Pretest Answers Data
   submitPretest(payload: PretestPayload): Observable<PretestResponse> {
     return this.http.post<PretestResponse>(`${this.baseUrl}/pretest`, payload);
   }
 
-  // 4. Upload Camera Image
   uploadCameraImage(file: Blob, uid: string, filename?: string): Observable<UploadPhotoResponse> {
     const formData = new FormData();
     formData.append('uid', uid);
@@ -130,10 +130,31 @@ export class ApiService {
   
     return this.http.post<UploadPhotoResponse>(`${this.baseUrl}/camera/upload`, formData);
   }
-  getQuest(language: string = 'en'): Observable<QuestResponse> {
-    return this.http.get<QuestResponse>(`${this.baseUrl}/quest`, {
-      params: { language }
-    });
+
+  getSection(sectionId: number, uid: string, language: string = 'en'): Observable<SectionFetchResponse> {
+    const url = `${this.baseUrl}/quest/section`;
+    const params = { sectionId: sectionId.toString(), uid: uid || '', language };
+
+    return this.http.get<SectionFetchResponse>(url, { params }).pipe(
+      tap(res => console.log(`[ApiService] Section ${sectionId} loaded:`, res)),
+      catchError(err => {
+        console.error(`[ApiService] Error fetching section ${sectionId}:`, err);
+        return throwError(() => err);
+      })
+    );
   }
 
+  getOptionFeedback(payload: FeedbackPayload): Observable<FeedbackResponse> {
+    const url = `${this.baseUrl}/quest/feedback`;
+
+    console.log(`[ApiService] POST payload -> ${url}`, payload);
+
+    return this.http.post<FeedbackResponse>(url, payload).pipe(
+      tap(res => console.log('[ApiService] Feedback received:', res)),
+      catchError(err => {
+        console.error('[ApiService] Error requesting feedback:', err);
+        return throwError(() => err);
+      })
+    );
+  }
 }
