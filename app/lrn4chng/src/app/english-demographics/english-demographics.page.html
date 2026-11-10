@@ -11,7 +11,7 @@
     <div class="hero-card">
       <div class="hero-badge">Step 1 of 3</div>
       <h2>Tell Us About Yourself 👤</h2>
-      <p>This information helps us tailor the learning experience to your background.</p>
+      <p>The information collected here will be stored in a secure EU-based private server.</p>
     </div>
 
     <form [formGroup]="demoForm" (ngSubmit)="onSubmit()" class="demo-form">
@@ -32,25 +32,8 @@
 
             <ion-item class="custom-input" lines="none">
               <ion-label position="stacked">Native Country <span class="req">*</span></ion-label>
-              <ion-select formControlName="nativeCountry" placeholder="Select" interface="action-sheet">
-                <ion-select-option *ngFor="let country of countries" [value]="country">
-                  {{ country }}
-                </ion-select-option>
-              </ion-select>
+              <ion-input type="text" formControlName="nativeCountry" placeholder="e.g. France"></ion-input>
             </ion-item>
-          </div>
-
-          <!-- Le Mans University -->
-          <div class="input-group ion-margin-top">
-            <label class="group-label">Are you from Le Mans University? <span class="req">*</span></label>
-            <ion-segment formControlName="isLeMansStudent" color="primary" class="custom-segment">
-              <ion-segment-button [value]="true">
-                <ion-label>✅ Yes</ion-label>
-              </ion-segment-button>
-              <ion-segment-button [value]="false">
-                <ion-label>❌ No</ion-label>
-              </ion-segment-button>
-            </ion-segment>
           </div>
 
           <!-- Gender -->
@@ -93,6 +76,18 @@
               </ion-segment-button>
             </ion-segment>
           </div>
+
+          <!-- Affiliation (University or Company) -->
+          <ion-item class="custom-input ion-margin-top" lines="none">
+            <ion-label position="stacked">
+              Affiliation — University or Company <span class="req">*</span>
+            </ion-label>
+            <ion-input
+              type="text"
+              formControlName="affiliation"
+              placeholder="e.g. Le Mans University, Acme Corp">
+            </ion-input>
+          </ion-item>
 
           <!-- Field of Study / Profession -->
           <ion-item class="custom-input ion-margin-top" lines="none">

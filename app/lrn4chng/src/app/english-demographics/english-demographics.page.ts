@@ -2,8 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { SessionService } from '../session';
-import { ApiService, DemographicsPayload } from '../api'; // Adjust relative path if needed
+import { SessionService } from '../core/session';
+import { ApiService, DemographicsPayload } from '../core/api'; // Adjust relative path if needed
 
 @Component({
   selector: 'app-english-demographics',
@@ -37,13 +37,6 @@ export class EnglishDemographicsPage implements OnInit {
     { value: 5, label: 'Expert', description: 'Daily power user' }
   ];
 
-  // Common countries list
-  countries: string[] = [
-    'United States', 'Canada', 'United Kingdom', 'France', 'Germany',
-    'Spain', 'Italy', 'China', 'India', 'Japan', 'South Korea',
-    'Brazil', 'Mexico', 'Australia', 'Other'
-  ];
-
   ngOnInit(): void {
     this.selectedLanguage =
       this.route.snapshot.queryParamMap.get('lang') ||
@@ -55,9 +48,9 @@ export class EnglishDemographicsPage implements OnInit {
       gender: ['', Validators.required],
       status: ['student', Validators.required],
       majorOrProfession: ['', [Validators.required, Validators.minLength(2)]],
+      affiliation: ['', [Validators.required, Validators.minLength(2)]],
       genAiFamiliarity: [null, Validators.required],
-      nativeCountry: ['', Validators.required],
-      isLeMansStudent: [null as boolean | null, Validators.required] // 👈 new
+      nativeCountry: ['', Validators.required]
     });
   }
 
@@ -87,9 +80,9 @@ export class EnglishDemographicsPage implements OnInit {
       gender: this.demoForm.value.gender,
       status: this.demoForm.value.status,
       majorOrProfession: this.demoForm.value.majorOrProfession,
+      affiliation: this.demoForm.value.affiliation,
       genAiFamiliarity: Number(this.demoForm.value.genAiFamiliarity),
       nativeCountry: this.demoForm.value.nativeCountry,
-      isLeMansStudent: this.demoForm.value.isLeMansStudent, // 👈 new
       language: this.selectedLanguage
     };
 

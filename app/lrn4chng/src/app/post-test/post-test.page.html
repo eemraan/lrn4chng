@@ -1,0 +1,116 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Final Knowledge Check</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="posttest-wrapper">
+
+    <!-- Completion state (shown after successful submission) -->
+    <div *ngIf="isSubmitted" class="hero-card">
+      <div class="hero-badge">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+        <span>All Done</span>
+      </div>
+      <h2>Post-test recorded 🎉</h2>
+      <p class="hero-subtitle">Thank you! The feedback form will be available soon.</p>
+    </div>
+
+    <ng-container *ngIf="!isSubmitted">
+
+      <!-- Hero Header -->
+      <div class="hero-card">
+        <div class="hero-badge">
+          <ion-icon name="ribbon-outline"></ion-icon>
+          <span>Final Step</span>
+        </div>
+
+        <h2>Post-Test 🌍</h2>
+        <p class="hero-subtitle">Now that you've completed the quest, let's check your knowledge again.</p>
+
+        <div class="instructions-box">
+          <div class="instruction-item">
+            <ion-icon name="checkmark-circle-outline" color="primary"></ion-icon>
+            <span><strong>Q1–Q4:</strong> Select <strong>True</strong> or <strong>False</strong></span>
+          </div>
+
+          <div class="instruction-item">
+            <ion-icon name="list-outline" color="primary"></ion-icon>
+            <span><strong>Q5–Q6:</strong> Select the best choice</span>
+          </div>
+
+          <div class="instruction-item tip">
+            <ion-icon name="help-circle-outline" color="medium"></ion-icon>
+            <span>Not sure? Select <strong>"Not Sure"</strong> (1 correct answer per question).</span>
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="quizForm" (ngSubmit)="onSubmit()" class="quiz-form">
+
+        <!-- SECTION 1: TRUE / FALSE QUESTIONS (1 to 4) -->
+        <ion-card class="form-card" *ngFor="let q of tfQuestions; let i = index">
+          <ion-card-header>
+            <ion-card-subtitle>Question {{ i + 1 }} of 6</ion-card-subtitle>
+            <ion-card-title class="question-text">{{ q.question }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="input-group">
+              <ion-segment [formControlName]="q.id" color="primary" class="custom-segment">
+                <ion-segment-button [value]="true">
+                  <ion-label>True</ion-label>
+                </ion-segment-button>
+                <ion-segment-button [value]="false">
+                  <ion-label>False</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="not_sure">
+                  <ion-label>Not Sure</ion-label>
+                </ion-segment-button>
+              </ion-segment>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- SECTION 2: MULTIPLE CHOICE QUESTIONS (5 & 6) -->
+        <ion-card class="form-card" *ngFor="let q of mcqQuestions; let i = index">
+          <ion-card-header>
+            <ion-card-subtitle>Question {{ i + 5 }} of 6 • Multiple Choice</ion-card-subtitle>
+            <ion-card-title class="question-text">{{ q.question }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <ion-radio-group [formControlName]="q.id" class="mcq-group">
+              <div
+                *ngFor="let option of q.options"
+                class="mcq-option-pill"
+                [class.selected]="quizForm.get(q.id)?.value === option.value"
+                (click)="selectMcqOption(q.id, option.value)">
+
+                <ion-radio [value]="option.value" class="hidden-radio"></ion-radio>
+                <div class="pill-badge">{{ option.label }}</div>
+                <div class="pill-text">{{ option.text }}</div>
+              </div>
+            </ion-radio-group>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Submit Button -->
+        <div class="action-footer">
+          <ion-button
+            expand="block"
+            color="primary"
+            shape="round"
+            type="submit"
+            [disabled]="quizForm.invalid || isSubmitting">
+            <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+            <span *ngIf="!isSubmitting">Submit Post-Test 🚀</span>
+          </ion-button>
+        </div>
+
+      </form>
+    </ng-container>
+
+  </div>
+</ion-content>

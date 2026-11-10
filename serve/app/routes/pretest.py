@@ -11,7 +11,7 @@ router = APIRouter(
 
 class PretestSchema(BaseModel):
     uid: str
-    answers: list[int] = Field(..., min_length=6, max_length=6)
+    answers: list[int] = Field(..., min_length=8, max_length=8)
     language: str
 
 

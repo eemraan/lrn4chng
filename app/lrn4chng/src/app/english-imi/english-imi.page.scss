@@ -1,0 +1,107 @@
+.imi-wrapper {
+  max-width: 540px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// Bold scale legend with progression arrow (M25)
+.likert-legend {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--ion-color-light);
+  border: 1.5px solid rgba(var(--ion-color-primary-rgb), 0.25);
+
+  .legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--ion-color-dark);
+
+      .legend-value {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+      }
+
+      .legend-label {
+        font-weight: 700;
+      }
+    }
+  }
+
+  // Progression arrow removed in M26 — legend items only
+}
+
+// Question cards
+.form-card {
+
+  .item-text {
+    margin: 0 0 10px 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+  }
+
+  .likert-row {
+    display: flex;
+    gap: 8px;
+
+    .likert-pill {
+      flex: 1;
+      height: 42px;
+      border-radius: 10px;
+      border: 1.5px solid var(--ion-color-medium);
+      background: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      cursor: pointer;
+      transition: all 0.15s ease;
+
+      &.selected {
+        background: var(--ion-color-primary);
+        border-color: var(--ion-color-primary);
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(var(--ion-color-primary-rgb), 0.35);
+      }
+    }
+  }
+
+  // 5-color band under the pills (M27)
+  .likert-band {
+    display: flex;
+    gap: 2px;
+    margin-top: 6px;
+
+    .band-segment {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+    }
+  }
+
+  // Small end-labels under the pill row (M24)
+  .likert-caption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 0.7rem;
+    color: var(--ion-color-medium);
+  }
+}

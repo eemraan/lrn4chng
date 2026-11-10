@@ -1,0 +1,58 @@
+.decide-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+// Hero card is centered on this page (base styles are global)
+.hero-card {
+  text-align: center;
+}
+
+// Action choice cards
+.choices {
+  margin-top: 16px;
+}
+
+.choice-card {
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+
+  .choice-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .choice-text {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 4px 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .chevron {
+    color: var(--ion-color-medium);
+  }
+
+  // Grayed-out state: all learning experiences completed
+  &.disabled {
+    opacity: 0.55;
+    filter: grayscale(1);
+    pointer-events: none;
+    cursor: default;
+
+    .chevron {
+      opacity: 0.5;
+    }
+  }
+}

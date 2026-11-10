@@ -74,3 +74,32 @@
     }
   }
   
+  // Key-points callouts under the consent text (M32)
+  .key-points {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+
+    .key-point {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      background: var(--ion-color-light);
+      border-radius: 10px;
+      padding: 10px 12px;
+
+      ion-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  // Study title inside the consent text
+  .study-title {
+    font-weight: 700;
+    color: var(--ion-color-dark, #222) !important;
+  }

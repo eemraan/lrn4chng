@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { ApiService } from '../api'; 
-import { SessionService } from '../session';
+import { ApiService } from '../core/api'; 
+import { SessionService } from '../core/session';
 
 @Component({
   selector: 'app-english-camera',

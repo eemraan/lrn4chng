@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { SessionService } from '../session';
+import { SessionService } from '../core/session';
 
 interface Stage {
   id: number;

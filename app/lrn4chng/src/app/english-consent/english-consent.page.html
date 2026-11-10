@@ -1,76 +1,134 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Consent</ion-title>
+    <ion-title>Research Consent</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <div class="consent-container">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>EdTech Platform Agreement</ion-card-subtitle>
-        <ion-card-title>English Learning Data & Terms Policy</ion-card-title>
-      </ion-card-header>
 
+    <!-- Hero -->
+    <div class="hero-card">
+      <div class="hero-badge">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <span>Consent Form</span>
+      </div>
+      <h2>Research Consent Form</h2>
+      <p>Please read the below text carefully.</p>
+    </div>
+
+    <ion-card class="form-card">
       <ion-card-content>
+
+        <!-- Consent text -->
         <div class="terms-scroll-box">
-          <h3>1. Educational & Speech Data</h3>
+          <p>Imran S. A. Khan, Doctoral Researcher at Le Mans University, asked me to participate in the research entitled:</p>
+          <p class="study-title">Assessing learning outcomes towards a learning technology teaching environmental/climate concepts.</p>
           <p>
-            By enrolling in this English course, you allow us to process your learning interactions, quiz scores, and audio practice recordings to provide feedback and assess language fluency.
-          </p>
+              This app is developed by <strong>John Smith, a PhD student at Le Mans University</strong>,
+              to make learning accessible through short, bite-sized experiences.
+            </p>
 
-          <h3>2. Student Privacy</h3>
-          <p>
-            Your personal information and voice recordings are stored securely and processed exclusively for your educational progress within the platform.
-          </p>
+            <p>
+              This particular app focuses on <strong>environmental and climate education</strong>,
+              helping you explore important topics that may fall outside your usual field of study.
+            </p>
 
-          <h3>3. Notifications & Progress Reports</h3>
-          <p>
-            We may send study reminders, lesson updates, and weekly language progress summary reports.
-          </p>
+            <p>
+              After high school, finding the time and opportunity to learn about subjects
+              beyond our specializations can be challenging. This app aims to make learning
+              easier by turning everyday moments—while waiting for a friend, catching a tram,
+              or simply having a few spare minutes—into opportunities to discover something new.
+            </p>
+
+            <p>
+              <strong>But before making this experience available to everyone, we need your help!</strong>
+              As part of this research, we want to understand what people need, whether this
+              approach is beneficial for learning, and whether the resources invested are worthwhile.
+            </p>
+
+            <p>
+              Your participation will help us evaluate and improve this learning experience.
+            </p>
+
+          <p>I have read the summary explaining the above-mentioned study, and the related information documents, <strong>on the date of: {{ today }}</strong>.</p>
+
+          <p>I was informed that the data collected for analysis and statistics purposes are intended for Imran S. A. Khan, Emmanuel G. Blanchard and Sébastien George, that the processing is optional, and that <strong>they will be kept for 1 year</strong>.</p>
+
+          <p>I agree to the analysis of my data in order to carry out the study defined above, in accordance with Law No. 78-17 of 6 January 1978 relating to information technology, files and freedoms (computerized processing of personal data).</p>
+
+          <p>I note that my personal data will be anonymized before any publication.</p>
+
+          <p>I note that I can exercise my rights over my personal data (access, rectification, opposition, <strong>erasure</strong>, limitation and portability) by contacting Mr. Imran S. A. Khan, <strong>imran.khan&#64;univ-lemans.fr</strong>.</p>
+
+          <p>I understand that I can refuse to participate in this study without consequences for me, and that I can withdraw my consent at any time (before and during the study) without having to justify myself and without consequences.</p>
+
+          <p>I have been informed that the results of the study will be presented individually, and that if I wish to know these results, I can contact the person responsible by email: <strong>imran.khan&#64;univ-lemans.fr</strong>.</p>
+
+          <p>Based on the information provided to me, I freely and voluntarily agree to participate in the research entitled: <em>Assessing learning outcomes towards a learning technology teaching environmental/climate concepts.</em>.</p>
+
+          <p>My consent does not relieve the investigator and the funder of their responsibilities towards me.</p>
+        </div>
+
+        <!-- Key points callouts -->
+        <div class="key-points">
+          <div class="key-point">
+            <ion-icon name="calendar-outline" color="primary"></ion-icon>
+            <span>Your data is kept for <strong>1 year</strong>, then deleted.</span>
+          </div>
+          <div class="key-point">
+            <ion-icon name="trash-outline" color="danger"></ion-icon>
+            <span>You can request <strong>deletion at any time</strong> by emailing imran.khan&#64;univ-lemans.fr.</span>
+          </div>
+          <div class="key-point">
+            <ion-icon name="mail-outline" color="success"></ion-icon>
+            <span>A copy of the <strong> consent form will be emailed</strong> to the address below.</span>
+          </div>
         </div>
 
         <form [formGroup]="consentForm" (ngSubmit)="onSubmit()">
           <ion-list lines="none" class="consent-list">
-            
+
             <!-- Email Field -->
-            <ion-item class="consent-item email-item">
-              <ion-label position="stacked">Email Address <span class="required">*</span></ion-label>
+            <ion-item class="consent-item email-item custom-input">
+              <ion-label position="stacked">Email Address <span class="req">*</span></ion-label>
               <ion-input
                 type="email"
                 formControlName="email"
-                placeholder="student@example.com"
-                helperText="A copy of your signed consent agreement will be sent to this email address for your records.">
+                placeholder="you@example.com"
+                helperText="The signed consent form will be sent to this email address for your records.">
               </ion-input>
             </ion-item>
 
-            <!-- Checkboxes -->
+            <!-- Three required approvals -->
             <ion-item class="consent-item">
-              <ion-checkbox formControlName="termsAccepted" slot="start"></ion-checkbox>
-              <ion-label class="ion-text-wrap">
-                I have read and accept the <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>. <span class="required">*</span>
-              </ion-label>
+              <ion-checkbox formControlName="read" slot="start"></ion-checkbox>
+              <ion-label class="ion-text-wrap">I have <strong>read</strong> the consent form. <span class="req">*</span></ion-label>
             </ion-item>
 
             <ion-item class="consent-item">
-              <ion-checkbox formControlName="dataSharingAccepted" slot="start"></ion-checkbox>
-              <ion-label class="ion-text-wrap">
-                I allow anonymized performance data to improve course materials. <span class="required">*</span>
-              </ion-label>
+              <ion-checkbox formControlName="understood" slot="start"></ion-checkbox>
+              <ion-label class="ion-text-wrap">I <strong>understood</strong> the information provided. <span class="req">*</span></ion-label>
+            </ion-item>
+
+            <ion-item class="consent-item">
+              <ion-checkbox formControlName="approved" slot="start"></ion-checkbox>
+              <ion-label class="ion-text-wrap">I <strong>approve</strong> and agree to participate in this study. <span class="req">*</span></ion-label>
             </ion-item>
 
           </ion-list>
 
-          <div class="action-buttons">
-            <ion-button expand="block" fill="outline" color="medium" (click)="onDecline()">
+          <div class="action-footer">
+            <ion-button expand="block" fill="outline" color="medium" type="button" (click)="onDecline()">
               Decline
             </ion-button>
-            <ion-button expand="block" color="primary" type="submit" [disabled]="consentForm.invalid">
-              Accept & Continue
+            <ion-button expand="block" color="primary" shape="round" type="submit" [disabled]="consentForm.invalid">
+              Accept &amp; Continue 🚀
             </ion-button>
           </div>
         </form>
       </ion-card-content>
     </ion-card>
+
   </div>
 </ion-content>

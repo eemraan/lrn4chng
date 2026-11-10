@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SessionService } from '../session';
-import { ApiService, ConsentPayload } from '../api';
+import { SessionService } from '../core/session';
+import { ApiService, ConsentPayload } from '../core/api';
 
 export interface ConsentResult {
   uid: string;
@@ -29,6 +29,13 @@ export class EnglishConsentPage implements OnInit {
   consentForm!: FormGroup;
   selectedLanguage: string = 'en';
 
+  /** Auto-filled consent date shown in the form text, e.g. "9 November 2026". */
+  today: string = new Date().toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
   private languageRoutes: { [key: string]: string } = {
     en: 'english',
     fr: 'french'
@@ -43,9 +50,9 @@ export class EnglishConsentPage implements OnInit {
 
     this.consentForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      termsAccepted: [false, Validators.requiredTrue],
-      dataSharingAccepted: [false, Validators.requiredTrue],
-      marketingAccepted: [false]
+      read: [false, Validators.requiredTrue],
+      understood: [false, Validators.requiredTrue],
+      approved: [false, Validators.requiredTrue]
     });
   }
 
@@ -69,7 +76,7 @@ export class EnglishConsentPage implements OnInit {
 
           const routePrefix = this.languageRoutes[this.selectedLanguage] || this.selectedLanguage;
 
-          // Route to demographics without leaking UID in query parameters
+          // Route to intro without leaking UID in query parameters
           this.router.navigate([`/${routePrefix}-intro`], {
             queryParams: { lang: this.selectedLanguage }
           });

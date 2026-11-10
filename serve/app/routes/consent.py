@@ -1,5 +1,7 @@
+from datetime import date
+
 from fastapi import APIRouter, status
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from app.database import store_consent
 
@@ -24,6 +26,7 @@ async def submit_consent(payload: ConsentSchema):
         email=payload.email,
         accepted=payload.accepted,
         language=payload.language,
+        consent_date=date.today().isoformat(),
     )
 
     return {

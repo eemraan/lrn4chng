@@ -1,0 +1,81 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Questionnaire</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="imi-wrapper">
+
+    <!-- Completion state (shown after the final part is submitted) -->
+    <div *ngIf="isSubmitted" class="hero-card">
+      <div class="hero-badge">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+        <span>All Done</span>
+      </div>
+      <h2>Questionnaire recorded 🎉</h2>
+      <p class="hero-subtitle">Thank you! The feedback form will be available soon.</p>
+    </div>
+
+    <ng-container *ngIf="!isSubmitted">
+
+      <!-- Bold scale legend (M25/M27 design) -->
+      <div class="likert-legend">
+        <div class="legend-items">
+          <div class="legend-item" *ngFor="let opt of likertLegend">
+            <span class="legend-value" [style.background]="opt.color">{{ opt.value }}</span>
+            <span class="legend-label">{{ opt.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="imiForm" (ngSubmit)="onNext()" class="imi-form">
+
+        <ion-card class="form-card" *ngFor="let item of items">
+          <ion-card-header>
+            <ion-card-subtitle>Question {{ item.number }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="item-text">{{ item.question }}</p>
+            <div class="likert-row">
+              <button
+                *ngFor="let v of likertValues"
+                type="button"
+                class="likert-pill"
+                [class.selected]="imiForm.get(item.id)?.value === v"
+                (click)="selectLikert(item.id, v)">
+                {{ v }}
+              </button>
+            </div>
+            <!-- 5-color band: red → dark green (M27) -->
+            <div class="likert-band">
+              <div
+                class="band-segment"
+                *ngFor="let opt of likertLegend"
+                [style.background]="opt.color"></div>
+            </div>
+            <div class="likert-caption">
+              <span>Strongly Disagree</span>
+              <span>Strongly Agree</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Next / Submit Button -->
+        <div class="action-footer">
+          <ion-button
+            expand="block"
+            color="primary"
+            shape="round"
+            type="submit"
+            [disabled]="imiForm.invalid || isSubmitting">
+            <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+            <span *ngIf="!isSubmitting">{{ part < 3 ? 'Next' : 'Submit Questionnaire 🚀' }}</span>
+          </ion-button>
+        </div>
+
+      </form>
+    </ng-container>
+
+  </div>
+</ion-content>

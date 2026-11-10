@@ -1,0 +1,81 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Thank You</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="thank-wrapper">
+
+    <!-- Hero -->
+    <div class="hero-card">
+      <div class="hero-badge">
+        <ion-icon name="heart-outline"></ion-icon>
+        <span>Study Complete</span>
+      </div>
+      <h2>Thank you! 🎉</h2>
+      <p class="hero-subtitle">Your participation helps this research. Just two quick questions left.</p>
+    </div>
+
+    <form [formGroup]="thankForm" (ngSubmit)="onSubmit()" class="thank-form">
+
+      <!-- Q1: open text opinion (optional) -->
+      <ion-card class="form-card">
+        <ion-card-header>
+          <ion-card-subtitle>Question 1 of 2 • Optional</ion-card-subtitle>
+          <ion-card-title class="question-text">What is your overall opinion about the application?</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-textarea
+            formControlName="opinion"
+            placeholder="Share your thoughts... (optional)"
+            rows="4"
+            fill="outline">
+          </ion-textarea>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Q2: willing to contribute further (required) -->
+      <ion-card class="form-card">
+        <ion-card-header>
+          <ion-card-subtitle>Question 2 of 2</ion-card-subtitle>
+          <ion-card-title class="question-text">Would you be willing to further contribute to this research?</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="input-group">
+            <ion-segment formControlName="willing" color="primary" class="custom-segment">
+              <ion-segment-button [value]="true">
+                <ion-label>✅ Yes</ion-label>
+              </ion-segment-button>
+              <ion-segment-button [value]="false">
+                <ion-label>❌ No</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </div>
+
+          <!-- Branch message shown as soon as willing is chosen -->
+          <div *ngIf="willingMessage" class="branch-message ion-margin-top ion-text-center">
+            <ion-text [color]="thankForm.value.willing === true ? 'success' : 'medium'">
+              <p><strong>{{ willingMessage }}</strong></p>
+            </ion-text>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Submit -->
+      <div class="action-footer">
+        <ion-button
+          expand="block"
+          color="primary"
+          shape="round"
+          type="submit"
+          [disabled]="thankForm.invalid || isSubmitting">
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+          <span *ngIf="!isSubmitting">Submit 🚀</span>
+        </ion-button>
+      </div>
+
+    </form>
+
+  </div>
+</ion-content>

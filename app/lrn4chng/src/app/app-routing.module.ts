@@ -71,6 +71,51 @@ const routes: Routes = [
     path: 'english-learn',
     loadChildren: () => import('./english-learn/english-learn.module').then( m => m.EnglishLearnPageModule)
   },
+  {
+    path: 'english-learn-2',
+    data: { round: 2 },
+    loadChildren: () => import('./english-learn/english-learn.module').then( m => m.EnglishLearnPageModule)
+  },
+  {
+    path: 'decide',
+    loadChildren: () => import('./decide/decide.module').then( m => m.DecidePageModule)
+  },
+  {
+    path: 'post-test',
+    loadChildren: () => import('./post-test/post-test.module').then( m => m.PostTestPageModule)
+  },
+  {
+    path: 'english-clt',
+    loadChildren: () => import('./english-clt/english-clt.module').then( m => m.EnglishCltPageModule)
+  },
+  {
+    path: 'english-clt-2',
+    data: { part: 2 },
+    loadChildren: () => import('./english-clt/english-clt.module').then( m => m.EnglishCltPageModule)
+  },
+  {
+    path: 'english-clt-3',
+    data: { part: 3 },
+    loadChildren: () => import('./english-clt/english-clt.module').then( m => m.EnglishCltPageModule)
+  },
+  {
+    path: 'english-imi',
+    loadChildren: () => import('./english-imi/english-imi.module').then( m => m.EnglishImiPageModule)
+  },
+  {
+    path: 'english-imi-2',
+    data: { part: 2 },
+    loadChildren: () => import('./english-imi/english-imi.module').then( m => m.EnglishImiPageModule)
+  },
+  {
+    path: 'english-imi-3',
+    data: { part: 3 },
+    loadChildren: () => import('./english-imi/english-imi.module').then( m => m.EnglishImiPageModule)
+  },
+  {
+    path: 'english-thank',
+    loadChildren: () => import('./english-thank/english-thank.module').then( m => m.EnglishThankPageModule)
+  },
 ];
 
 @NgModule({

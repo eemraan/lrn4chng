@@ -1,0 +1,19 @@
+.thank-wrapper {
+  max-width: 540px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// Branch message shown after the yes/no choice (page-specific)
+.branch-message {
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 10px 12px;
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}

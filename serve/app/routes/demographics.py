@@ -15,10 +15,10 @@ class DemographicsSchema(BaseModel):
     gender: str
     status: str
     majorOrProfession: str = Field(..., min_length=2)
+    affiliation: str = Field(..., min_length=2)
     genAiFamiliarity: int = Field(..., ge=1, le=5)
     nativeCountry: str
     language: str
-    isLeMansStudent: bool
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -30,10 +30,10 @@ async def submit_demographics(payload: DemographicsSchema):
         gender=payload.gender,
         status=payload.status,
         major_or_profession=payload.majorOrProfession,
+        affiliation=payload.affiliation,
         gen_ai_familiarity=payload.genAiFamiliarity,
         native_country=payload.nativeCountry,
         language=payload.language,
-        is_le_mans_student=payload.isLeMansStudent,
     )
 
     return {

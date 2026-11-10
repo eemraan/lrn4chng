@@ -1,6 +1,9 @@
 import {
   Component,
   ViewChild,
+  ViewChildren,
+  ElementRef,
+  QueryList,
   ChangeDetectorRef,
   OnInit,
   NgZone,
@@ -8,7 +11,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController, IonContent } from '@ionic/angular';
-import { ApiService, QuestSection, FeedbackResponse, FeedbackPayload } from '../api';
+import { ApiService, QuestSection, FeedbackResponse, FeedbackPayload } from '../core/api';
 
 export interface LoadedSectionState {
   section: QuestSection;
@@ -28,13 +31,17 @@ export interface LoadedSectionState {
 })
 export class EnglishLearnPage implements OnInit {
   @ViewChild(IonContent) content!: IonContent;
+  // Component-scoped section elements — immune to ion-router-outlet keeping
+  // previously visited pages (with duplicate section-card ids) in the DOM.
+  @ViewChildren('sectionEl') sectionEls!: QueryList<ElementRef<HTMLElement>>;
 
   uid: string = '';
   selectedLanguage: string = 'en';
+  round: number = 1;
 
   questTitle: string = 'Ecology Quest';
   questDescription: string = 'Explore how trees adapt to cold weather and photosynthesis during winter.';
-  totalSteps: number = 7;
+  totalSteps: number = 8;
 
   hasStarted: boolean = false;
   isLoadingSection: boolean = false;
@@ -82,6 +89,13 @@ export class EnglishLearnPage implements OnInit {
     if (queryLang) {
       this.selectedLanguage = queryLang;
     }
+
+    // Round (study content set) comes from the route data (e.g. /english-learn-2
+    // carries {round: 2}), falling back to a ?round= query param, defaulting to 1
+    const routeRound = this.route.snapshot.data['round'];
+    const queryRound = this.route.snapshot.queryParamMap.get('round');
+    this.round = Number(routeRound ?? queryRound ?? 1) || 1;
+    console.log('[EnglishLearnPage] Round:', this.round);
   }
 
   startQuest(): void {
@@ -97,7 +111,7 @@ export class EnglishLearnPage implements OnInit {
     this.questLoadError = null;
     this.cdr.detectChanges();
 
-    this.api.getSection(sectionId, this.uid, this.selectedLanguage).subscribe({
+    this.api.getSection(sectionId, this.uid, this.selectedLanguage, this.round).subscribe({
       next: (res) => {
         this.zone.run(() => {
           this.isLoadingSection = false;
@@ -164,7 +178,8 @@ export class EnglishLearnPage implements OnInit {
       selectedOption: state.selectedOption,
       textInput: state.textValue || null,
       allResponses: this.allUserResponses,
-      language: this.selectedLanguage
+      language: this.selectedLanguage,
+      round: this.round
     };
 
     this.api.getOptionFeedback(payload).subscribe({
@@ -192,6 +207,17 @@ export class EnglishLearnPage implements OnInit {
     });
   }
 
+  /**
+   * Wrong answer on a single-select: clear the feedback so the options
+   * reappear in place and the user can pick the correct one.
+   */
+  retrySection(state: LoadedSectionState): void {
+    state.feedback = null;
+    state.feedbackLoading = false;
+    state.selectedOption = null; // clear stale highlight
+    this.cdr.detectChanges();
+  }
+
   onContinueSection(sectionIndex: number): void {
     const state = this.loadedSections[sectionIndex];
     if (!state) return;
@@ -206,7 +232,8 @@ export class EnglishLearnPage implements OnInit {
       selectedOption: state.selectedOption,
       textInput: state.textValue || null,
       allResponses: this.allUserResponses,
-      language: this.selectedLanguage
+      language: this.selectedLanguage,
+      round: this.round
     };
 
     this.api.getOptionFeedback(payload).subscribe({
@@ -214,7 +241,11 @@ export class EnglishLearnPage implements OnInit {
       error: (err) => console.error('[EnglishLearnPage] Tracking error on continue:', err)
     });
 
-    const nextSectionId = state.section.id + 1;
+    const nextSectionId = Number(state.section.id) + 1;
+    if (!Number.isFinite(nextSectionId) || nextSectionId < 1) {
+      console.error('[EnglishLearnPage] Invalid section id, cannot continue:', state.section.id);
+      return;
+    }
     this.fetchNextSection(nextSectionId);
   }
 
@@ -232,17 +263,22 @@ export class EnglishLearnPage implements OnInit {
   }
 
   finishQuest(): void {
-    console.log('[EnglishLearnPage] Finishing quest with UID:', this.uid);
-    this.navCtrl.navigateForward('/summary', {
-      queryParams: { uid: this.uid, lang: this.selectedLanguage }
+    console.log('[EnglishLearnPage] Quest finished (round', this.round + ') — navigating to decide page');
+    this.navCtrl.navigateForward('/decide', {
+      queryParams: { uid: this.uid, lang: this.selectedLanguage, round: this.round }
     });
   }
 
   private scrollToSectionElement(sectionId: number): void {
     setTimeout(() => {
-      const targetElement = document.getElementById(`section-card-${sectionId}`);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Look up the section within THIS component's view only — the document-wide
+      // getElementById could match a previous page's element kept in the DOM by
+      // ion-router-outlet (e.g. the round-1 page when running round 2).
+      const target = this.sectionEls?.find(
+        el => el.nativeElement.id === `section-card-${sectionId}`
+      );
+      if (target) {
+        target.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
         this.content?.scrollToBottom(500);
       }
@@ -260,5 +296,17 @@ export class EnglishLearnPage implements OnInit {
 
   getOptionBadge(section: QuestSection, index: number): string {
     return section.letterBadges ? String.fromCharCode(65 + index) : (index + 1).toString();
+  }
+
+  /**
+   * Whether the learner may proceed past this section.
+   * §5 (Tier 1) passes regardless of correctness (M8); other single-select
+   * sections only proceed on a correct answer; binary/textarea always pass.
+   */
+  canProceed(state: LoadedSectionState): boolean {
+    if (state.section.type === 'single-select' && state.section.id !== 5) {
+      return state.feedback?.isCorrect === true;
+    }
+    return state.isCompleted;
   }
 }

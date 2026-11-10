@@ -11,7 +11,7 @@ import {
 import {
   BleService,
   SensorData
-} from '../sensors';
+} from '../core/sensors';
 
 
 @Component({

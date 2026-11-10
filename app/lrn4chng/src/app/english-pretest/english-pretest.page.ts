@@ -2,8 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
-import { SessionService } from '../session';
-import { ApiService, PretestPayload } from '../api';
+import { SessionService } from '../core/session';
+import { ApiService, PretestPayload } from '../core/api';
 
 interface QuestionConfig {
   id: string;
@@ -81,6 +81,28 @@ export class EnglishPretestPage implements OnInit {
         { label: 'A', value: 'energy', text: 'Increased heating demand, which leads to greater fuel consumption in buildings.' },
         { label: 'B', value: 'photo', text: 'Decreased photosynthesis, which releases more CO₂ into the atmosphere.' },
         { label: 'C', value: 'transport', text: 'Increased water absorption by trees, which releases more CO₂ into the atmosphere.' },
+        { label: 'D', value: 'not_sure', text: 'Not Sure' },
+      ],
+    },
+    {
+      id: 'q7',
+      question: 'Compared with summer, what typically happens to CO₂ emissions in cities during winter?',
+      correctAnswer: 'increase',
+      options: [
+        { label: 'A', value: 'decrease', text: 'They decrease.' },
+        { label: 'B', value: 'same', text: 'They remain approximately the same.' },
+        { label: 'C', value: 'increase', text: 'They increase.' },
+        { label: 'D', value: 'not_sure', text: 'Not Sure' },
+      ],
+    },
+    {
+      id: 'q8',
+      question: 'Why do you think this happens?',
+      correctAnswer: 'heating_photo',
+      options: [
+        { label: 'A', value: 'less_travel', text: 'People use less electricity and travel less during winter, but the increased concentration of CO₂ in colder air causes overall urban emissions to rise.' },
+        { label: 'B', value: 'heating_photo', text: 'People use more heating during winter, increasing fuel consumption and CO₂ emissions. At the same time, trees absorb less CO₂ because of reduced photosynthesis.' },
+        { label: 'C', value: 'colder_absorb', text: 'People use more heating during winter, but colder temperatures also allow trees to absorb more CO₂, balancing out the additional emissions.' },
         { label: 'D', value: 'not_sure', text: 'Not Sure' },
       ],
     },

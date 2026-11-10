@@ -1,0 +1,322 @@
+{
+  "questTitle": "Ecology Quest — Round 2",
+  "totalSteps": 8,
+  "sections": [
+    {
+      "id": 1,
+      "type": "binary",
+      "tag": {
+        "icon": "eye-outline",
+        "label": "Observation",
+        "cssClass": "obs"
+      },
+      "question": "Do you see the trees in front of you?",
+      "subtitle": "Take a moment to inspect the surrounding foliage before answering.",
+      "options": null,
+      "binaryActions": [
+        {
+          "value": "yes",
+          "icon": "🌲",
+          "text": "Yes, I see them"
+        },
+        {
+          "value": "no",
+          "icon": "🔍",
+          "text": "No, let me look closer"
+        }
+      ],
+      "placeholder": null,
+      "minWords": null,
+      "continueText": "Continue to Question 2",
+      "choicePromptText": null,
+      "finishText": null,
+      "letterBadges": null
+    },
+    {
+      "id": 2,
+      "type": "single-select",
+      "tag": {
+        "icon": "thermometer-outline",
+        "label": "Conditions (14°C)",
+        "cssClass": "alt"
+      },
+      "question": "In these cold conditions of 14°C and low humidity, what is happening to the trees?",
+      "subtitle": null,
+      "options": [
+        {
+          "text": "Leaves break down chlorophyll and change color to conserve nutrients and prepare for winter dormancy.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Try Again!",
+            "message": "Re-read the options to find how cold weather affects leaf chlorophyll."
+          }
+        },
+        {
+          "text": "Leaves produce excess chlorophyll to absorb cold sunlight and accelerate growth.",
+          "isCorrect": true,
+          "feedback": {
+            "header": "Great Insight!",
+            "message": "Lower temperatures trigger trees to break down chlorophyll for dormancy."
+          }
+        },
+        {
+          "text": "Trees absorb groundwater rapidly to pump warm sap and sprout new foliage.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Trees do not pump warm sap to sprout new foliage in winter — dormancy is a survival strategy, not a growth phase."
+          }
+        }
+      ],
+      "binaryActions": null,
+      "placeholder": null,
+      "minWords": null,
+      "continueText": "Continue to Question 3",
+      "choicePromptText": null,
+      "finishText": null,
+      "letterBadges": null
+    },
+    {
+      "id": 3,
+      "type": "single-select",
+      "tag": {
+        "icon": "flash-outline",
+        "label": "Plant Biology",
+        "cssClass": "energy"
+      },
+      "question": "How do you think plants create energy?",
+      "subtitle": null,
+      "options": [
+        {
+          "text": "Photosynthesis — converting light energy into chemical energy",
+          "isCorrect": true,
+          "feedback": {
+            "header": "Spot On!",
+            "message": "Plants use solar energy through photosynthesis to produce fuel."
+          }
+        },
+        {
+          "text": "Soil Absorption — drawing energy directly from ground heat and minerals",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Plants do not draw energy from soil heat — energy comes from light, captured through photosynthesis."
+          }
+        }
+      ],
+      "binaryActions": null,
+      "placeholder": null,
+      "minWords": null,
+      "continueText": "Continue to Question 4",
+      "choicePromptText": null,
+      "finishText": null,
+      "letterBadges": true
+    },
+    {
+      "id": 4,
+      "type": "single-select",
+      "tag": {
+        "icon": "flask-outline",
+        "label": "Chemical Reaction",
+        "cssClass": "chemical"
+      },
+      "question": "What exactly happens in photosynthesis?",
+      "subtitle": null,
+      "options": [
+        {
+          "text": "Plants take in carbon dioxide and water, using light energy to produce glucose (sugar) and release oxygen as a byproduct.",
+          "isCorrect": true,
+          "feedback": {
+            "header": "Correct!",
+            "message": "CO₂ + Light + Water yields Glucose and Oxygen."
+          }
+        },
+        {
+          "text": "Plants absorb oxygen and glucose from the air, using soil heat to generate light energy and release water vapor.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Plants do not absorb oxygen and glucose from the air — they take in CO₂ and water and release oxygen."
+          }
+        },
+        {
+          "text": "Plants draw nitrogen and minerals from the soil, using underground warmth to synthesize chlorophyll and release carbon dioxide.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Nitrogen and soil minerals are nutrients, not energy sources — light energy drives photosynthesis."
+          }
+        }
+      ],
+      "binaryActions": null,
+      "placeholder": null,
+      "minWords": null,
+      "continueText": "Continue to Question 5",
+      "choicePromptText": null,
+      "finishText": null,
+      "letterBadges": null
+    },
+    {
+      "id": 5,
+      "type": "single-select",
+      "tag": {
+        "icon": "partly-sunny-outline",
+        "label": "Tier 1 — Seasonal Changes",
+        "cssClass": "climate"
+      },
+      "question": "Compared with summer, what typically happens to CO₂ emissions in cities during winter?",
+      "subtitle": null,
+      "options": [
+        {
+          "text": "They decrease.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Try Again!",
+            "message": "Think about heating demand and reduced tree activity in cities during winter."
+          }
+        },
+        {
+          "text": "They remain approximately the same.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Try Again!",
+            "message": "Think about heating demand and reduced tree activity in cities during winter."
+          }
+        },
+        {
+          "text": "They increase.",
+          "isCorrect": true,
+          "feedback": {
+            "header": "Correct!",
+            "message": "Winter heating and traffic patterns typically push urban CO₂ emissions up compared with summer."
+          }
+        }
+      ],
+      "binaryActions": null,
+      "placeholder": null,
+      "minWords": null,
+      "continueText": "Continue to Tier 2",
+      "choicePromptText": null,
+      "finishText": null,
+      "letterBadges": true
+    },
+    {
+      "id": 6,
+      "type": "single-select",
+      "tag": {
+        "icon": "bulb-outline",
+        "label": "Tier 2 — Explanation",
+        "cssClass": "energy"
+      },
+      "question": "Why do you think this happens?",
+      "subtitle": null,
+      "options": [
+        {
+          "text": "People use less electricity and travel less during winter, but the increased concentration of CO₂ in colder air causes overall urban emissions to rise.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Less electricity and travel do lower emissions somewhat, but the dominant winter factor is heating — and colder air does not raise CO₂ concentration by itself."
+          }
+        },
+        {
+          "text": "People use more heating during winter, increasing fuel consumption and CO₂ emissions. At the same time, trees absorb less CO₂ because of reduced photosynthesis.",
+          "isCorrect": true,
+          "feedback": {
+            "header": "Exactly!",
+            "message": "More heating raises fuel use and emissions, while dormant trees photosynthesize less and absorb less CO₂."
+          }
+        },
+        {
+          "text": "People use more heating during winter, but colder temperatures also allow trees to absorb more CO₂, balancing out the additional emissions.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Colder temperatures do NOT let trees absorb more CO₂ — reduced photosynthesis in winter means trees absorb less."
+          }
+        }
+      ],
+      "binaryActions": null,
+      "placeholder": null,
+      "minWords": null,
+      "continueText": "Continue to Question 7",
+      "choicePromptText": null,
+      "finishText": null,
+      "letterBadges": true
+    },
+    {
+      "id": 7,
+      "type": "single-select",
+      "tag": {
+        "icon": "leaf-outline",
+        "label": "Atmospheric Oxygen",
+        "cssClass": "oxygen"
+      },
+      "question": "What happens to Oxygen (O₂) output when trees are dormant in winter?",
+      "subtitle": null,
+      "options": [
+        {
+          "text": "Oxygen production drops significantly because dormant trees stop photosynthesizing.",
+          "isCorrect": true,
+          "feedback": {
+            "header": "Exactly Right!",
+            "message": "Without leaves photosynthesizing, net oxygen release from deciduous forests decreases during winter months."
+          }
+        },
+        {
+          "text": "Oxygen levels double as cold air compresses gas molecules around the tree canopy.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Cold air does not compress O₂ enough to double oxygen levels — the real effect is reduced photosynthesis in dormant trees."
+          }
+        },
+        {
+          "text": "Oxygen stays completely unchanged because leaves store extra oxygen reserves.",
+          "isCorrect": false,
+          "feedback": {
+            "header": "Not quite!",
+            "message": "Leaves do not store extra oxygen reserves — when photosynthesis stops in winter, net oxygen output drops."
+          }
+        }
+      ],
+      "binaryActions": null,
+      "placeholder": null,
+      "minWords": null,
+      "continueText": null,
+      "choicePromptText": "Would you like to continue or finish?",
+      "finishText": null,
+      "letterBadges": null
+    },
+    {
+      "id": 8,
+      "type": "binary",
+      "tag": {
+        "icon": "earth-outline",
+        "label": "Take Action",
+        "cssClass": "final"
+      },
+      "question": "Do you think it is important to do our part to reduce CO₂ emissions in winter?",
+      "subtitle": null,
+      "options": null,
+      "binaryActions": [
+        {
+          "value": "yes",
+          "icon": "🌍",
+          "text": "Yes, absolutely"
+        },
+        {
+          "value": "no",
+          "icon": "🤔",
+          "text": "No, not necessary"
+        }
+      ],
+      "placeholder": null,
+      "minWords": null,
+      "continueText": null,
+      "choicePromptText": "Would you like to continue or finish?",
+      "finishText": "Finish & Complete Quest",
+      "letterBadges": null
+    }
+  ]
+}

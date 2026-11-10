@@ -37,6 +37,7 @@
 
     <!-- DYNAMIC SECTIONS -->
     <div
+      #sectionEl
       *ngFor="let state of loadedSections; let idx = index"
       [id]="'section-card-' + state.section.id"
       class="section-wrapper">
@@ -79,8 +80,8 @@
             <!-- Next Section / Finish Controls -->
             <div *ngIf="state.isCompleted && idx === loadedSections.length - 1" class="action-footer ion-margin-top">
               
-              <!-- Requirement 1: Hardcoded Note & Finish Button for Section 6 and Section 7 -->
-              <div *ngIf="state.section.id === 6 || state.section.id === 7" class="choice-note-container ion-margin-bottom ion-text-center">
+              <!-- Requirement 1: Hardcoded Note & Finish Button for Section 6, 7 and 8 -->
+              <div *ngIf="state.section.id === 6 || state.section.id === 7 || state.section.id === 8" class="choice-note-container ion-margin-bottom ion-text-center">
                 <ion-note color="dark" class="choice-note font-weight-bold">
                   Would you like to continue or finish?
                 </ion-note>
@@ -95,9 +96,9 @@
                   {{ state.section.continueText || 'Continue' }}
                 </ion-button>
 
-                <!-- Finish button present on Section 6 and 7 -->
+                <!-- Finish button present on Section 6, 7 and 8 -->
                 <ion-button
-                  *ngIf="state.section.id === 6 || state.section.id === 7 || state.section.id === totalSteps"
+                  *ngIf="state.section.id === 6 || state.section.id === 7 || state.section.id === 8 || state.section.id === totalSteps"
                   expand="block"
                   color="primary"
                   class="ion-margin-top"
@@ -122,7 +123,7 @@
             <ion-card-title>{{ state.section.question }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <ion-list lines="none">
+            <ion-list lines="none" *ngIf="!state.feedbackLoading && !state.feedback">
               <ion-item
                 *ngFor="let opt of state.section.options; let optIdx = index"
                 button
@@ -145,14 +146,25 @@
                 <h4>{{ state.feedback.header }}</h4>
                 <p>{{ state.feedback.message }}</p>
               </ion-text>
-              
-              <!-- Requirement 1: Note and Finish Button on Section 6 & 7 -->
-              <div *ngIf="state.section.id === 6 || state.section.id === 7" class="choice-note-container ion-margin-top ion-text-center">
+
+              <!-- Wrong answer: let the user retry in place -->
+              <ion-button
+                *ngIf="!state.feedback.isCorrect"
+                expand="block"
+                fill="outline"
+                color="primary"
+                class="ion-margin-top"
+                (click)="retrySection(state)">
+                Try Again
+              </ion-button>
+
+              <!-- Requirement 1: Note and Finish Button on Section 6, 7 & 8 -->
+              <div *ngIf="(state.section.id === 6 || state.section.id === 7 || state.section.id === 8) && canProceed(state)" class="choice-note-container ion-margin-top ion-text-center">
                 <p><strong>Would you like to continue or finish?</strong></p>
               </div>
 
               <ion-button
-                *ngIf="state.feedback.isCorrect && idx === loadedSections.length - 1 && state.section.id < totalSteps"
+                *ngIf="canProceed(state) && idx === loadedSections.length - 1 && state.section.id < totalSteps"
                 expand="block"
                 color="success"
                 class="ion-margin-top"
@@ -161,7 +173,7 @@
               </ion-button>
 
               <ion-button
-                *ngIf="(state.section.id === 6 || state.section.id === 7 || state.section.id === totalSteps) && idx === loadedSections.length - 1"
+                *ngIf="(state.section.id === 6 || state.section.id === 7 || state.section.id === 8 || state.section.id === totalSteps) && canProceed(state) && idx === loadedSections.length - 1"
                 expand="block"
                 color="primary"
                 class="ion-margin-top"

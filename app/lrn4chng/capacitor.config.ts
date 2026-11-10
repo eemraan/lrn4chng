@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'site.lrn4chng.app',
   appName: 'lrn4chng',
   webDir: 'www'
 };

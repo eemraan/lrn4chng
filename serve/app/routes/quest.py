@@ -1,12 +1,22 @@
-# app/routers/quest.py  (adjust path to match your project structure)
-from fastapi import APIRouter
+# app/routers/quest.py
+import hashlib
+import json
+from pathlib import Path
+
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
+
+from app.database import store_quest_progress
 
 router = APIRouter(
     prefix="/quest",
     tags=["Quest"]
 )
 
+
+# ============================================================
+# Internal models (server-side only — never exposed to clients)
+# ============================================================
 
 class QuestSectionTag(BaseModel):
     icon: str
@@ -17,11 +27,9 @@ class QuestSectionTag(BaseModel):
 class QuestSectionOption(BaseModel):
     text: str
     isCorrect: bool
-
-
-class QuestSectionFeedback(BaseModel):
-    correct: dict
-    incorrect: dict
+    # Shown to the participant when THIS option is picked (server-side only —
+    # never included in the public section payload)
+    feedback: dict  # {"header": str, "message": str}
 
 
 class QuestSectionSchema(BaseModel):
@@ -32,7 +40,6 @@ class QuestSectionSchema(BaseModel):
     subtitle: str | None = None
     options: list[QuestSectionOption] | None = None
     binaryActions: list[dict] | None = None
-    feedback: QuestSectionFeedback | None = None
     placeholder: str | None = None
     minWords: int | None = None
     continueText: str | None = None
@@ -46,128 +53,228 @@ class QuestData(BaseModel):
     totalSteps: int
     sections: list[QuestSectionSchema]
 
+
+# ============================================================
+# Public models (sent to clients — no answers, no feedback text)
+# ============================================================
+
+class PublicQuestSectionOption(BaseModel):
+    text: str
+
+
+class PublicQuestSection(BaseModel):
+    id: int
+    type: str
+    tag: QuestSectionTag
+    question: str
+    subtitle: str | None = None
+    options: list[PublicQuestSectionOption] | None = None
+    binaryActions: list[dict] | None = None
+    placeholder: str | None = None
+    minWords: int | None = None
+    continueText: str | None = None
+    choicePromptText: str | None = None
+    finishText: str | None = None
+    letterBadges: bool | None = None
+
+
+class PublicQuestData(BaseModel):
+    questTitle: str
+    totalSteps: int
+    sections: list[PublicQuestSection]
+
+
 class QuestResponse(BaseModel):
     status: str
     message: str | None = None
-    data: QuestData | None = None
+    data: PublicQuestData | None = None
 
 
-QUEST_DATA: QuestData = QuestData(
-    questTitle="Ecology Quest",
-    totalSteps=7,
-    sections=[
-        QuestSectionSchema(
-            id=1,
-            type="binary",
-            tag=QuestSectionTag(icon="eye-outline", label="Observation", cssClass="obs"),
-            question="Do you see the trees in front of you?",
-            subtitle="Take a moment to inspect the surrounding foliage before answering.",
-            binaryActions=[
-                {"value": "yes", "icon": "🌲", "text": "Yes, I see them"},
-                {"value": "no", "icon": "🔍", "text": "No, let me look closer"},
-            ],
-            continueText="Continue to Question 2",
-        ),
-        QuestSectionSchema(
-            id=2,
-            type="single-select",
-            tag=QuestSectionTag(icon="thermometer-outline", label="Conditions (14°C)", cssClass="alt"),
-            question="In these cold conditions of 14°C and low humidity, what is happening to the trees?",
-            options=[
-                QuestSectionOption(text="Leaves break down chlorophyll and change color to conserve nutrients and prepare for winter dormancy.", isCorrect=True),
-                QuestSectionOption(text="Leaves produce excess chlorophyll to absorb cold sunlight and accelerate growth.", isCorrect=False),
-                QuestSectionOption(text="Trees absorb groundwater rapidly to pump warm sap and sprout new foliage.", isCorrect=False),
-            ],
-            feedback=QuestSectionFeedback(
-                correct={"header": "Great Insight!", "message": "Lower temperatures trigger trees to break down chlorophyll for dormancy."},
-                incorrect={"header": "Try Again!", "message": "Re-read the options to find how cold weather affects leaf chlorophyll."},
-            ),
-            continueText="Continue to Question 3",
-        ),
-        QuestSectionSchema(
-            id=3,
-            type="single-select",
-            tag=QuestSectionTag(icon="flash-outline", label="Plant Biology", cssClass="energy"),
-            question="How do you think plants create energy?",
-            letterBadges=True,
-            options=[
-                QuestSectionOption(text="Photosynthesis — converting light energy into chemical energy", isCorrect=True),
-                QuestSectionOption(text="Soil Absorption — drawing energy directly from ground heat and minerals", isCorrect=False),
-            ],
-            feedback=QuestSectionFeedback(
-                correct={"header": "Spot On!", "message": "Plants use solar energy through photosynthesis to produce fuel."},
-                incorrect={"header": "Try Again!", "message": "Plants rely on light rather than soil heat for energy synthesis."},
-            ),
-            continueText="Continue to Question 4",
-        ),
-        QuestSectionSchema(
-            id=4,
-            type="single-select",
-            tag=QuestSectionTag(icon="flask-outline", label="Chemical Reaction", cssClass="chemical"),
-            question="What exactly happens in photosynthesis?",
-            options=[
-                QuestSectionOption(text="Plants take in carbon dioxide and water, using light energy to produce glucose (sugar) and release oxygen as a byproduct.", isCorrect=True),
-                QuestSectionOption(text="Plants absorb oxygen and glucose from the air, using soil heat to generate light energy and release water vapor.", isCorrect=False),
-                QuestSectionOption(text="Plants draw nitrogen and minerals from the soil, using underground warmth to synthesize chlorophyll and release carbon dioxide.", isCorrect=False),
-            ],
-            feedback=QuestSectionFeedback(
-                correct={"header": "Correct!", "message": "CO₂ + Light + Water yields Glucose and Oxygen."},
-                incorrect={"header": "Try Again!", "message": "Think about which inputs produce glucose and oxygen."},
-            ),
-            continueText="Continue to Question 5",
-        ),
-        QuestSectionSchema(
-            id=5,
-            type="textarea",
-            tag=QuestSectionTag(icon="cloud-outline", label="Carbon Cycle", cssClass="climate"),
-            question="When trees go dormant, how does it affect CO₂ emission?",
-            subtitle="Explain your reasoning in the box below (at least 10 words).",
-            placeholder="Type your explanation here...",
-            minWords=10,
-            choicePromptText="Do you want to know what happens next or finish?",
-        ),
-        QuestSectionSchema(
-            id=6,
-            type="single-select",
-            tag=QuestSectionTag(icon="leaf-outline", label="Atmospheric Oxygen", cssClass="oxygen"),
-            question="What happens to Oxygen (O₂) output when trees are dormant in winter?",
-            options=[
-                QuestSectionOption(text="Oxygen production drops significantly because dormant trees stop photosynthesizing.", isCorrect=True),
-                QuestSectionOption(text="Oxygen levels double as cold air compresses gas molecules around the tree canopy.", isCorrect=False),
-                QuestSectionOption(text="Oxygen stays completely unchanged because leaves store extra oxygen reserves.", isCorrect=False),
-            ],
-            feedback=QuestSectionFeedback(
-                correct={"header": "Exactly Right!", "message": "Without leaves photosynthesizing, net oxygen release from deciduous forests decreases during winter months."},
-                incorrect={"header": "Try Again!", "message": "Consider how photosynthesis generates O₂ and what happens when it shuts down."},
-            ),
-            choicePromptText="Do you want to know what happens next or finish?",
-        ),
-        QuestSectionSchema(
-            id=7,
-            type="binary",
-            tag=QuestSectionTag(icon="earth-outline", label="Take Action", cssClass="final"),
-            question="Do you think it is important to do our part to reduce CO₂ emissions in winter?",
-            binaryActions=[
-                {"value": "yes", "icon": "🌍", "text": "Yes, absolutely"},
-                {"value": "no", "icon": "🤔", "text": "No, not necessary"},
-            ],
-            choicePromptText="Do you want to know what happens next or finish?",
-            finishText="Finish & Complete Quest",
-        ),
-    ],
-)
+class SectionFetchResponse(BaseModel):
+    status: str
+    questTitle: str
+    totalSteps: int
+    section: PublicQuestSection
 
 
-@router.get("", response_model=QuestData)
-@router.get("/", response_model=QuestData, include_in_schema=False)
-async def get_quest():
-    return QUEST_DATA
+class FeedbackPayload(BaseModel):
+    uid: str
+    sectionId: int
+    timestamp: int
+    clicksCount: int = 0
+    selectedOption: int | str | None = None
+    textInput: str | None = None
+    allResponses: dict | None = None
+    language: str = "en"
+    round: int | None = None  # 1 or 2; falls back to a uid-derived round
+
+
+class FeedbackResponse(BaseModel):
+    status: str
+    isCorrect: bool
+    header: str
+    message: str
+
+
+# ============================================================
+# Quest content (single source of truth)
+# ============================================================
+
+# Quest content lives in JSON files (one per study round), loaded at startup.
+# Files: app/data/quest_round1.json, quest_round2.json — same schema, different
+# content. Internal-only fields (isCorrect, feedback) stay on the server.
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+ROUNDS = (1, 2)
+
+
+def _load_quests() -> dict[int, "QuestData"]:
+    quests: dict[int, QuestData] = {}
+    for n in ROUNDS:
+        path = DATA_DIR / f"quest_round{n}.json"
+        with open(path, encoding="utf-8") as f:
+            quests[n] = QuestData.model_validate(json.load(f))
+    return quests
+
+
+QUESTS: dict[int, QuestData] = _load_quests()
+
+
+def _resolve_round(uid: str, requested: int | None) -> int:
+    """Explicit ?round= wins; otherwise a deterministic round derived from the
+    uid (stable across calls, counterbalanced). The chosen round is logged on
+    the uid's quest_progress document."""
+    if requested in ROUNDS:
+        return requested
+    if uid:
+        return int(hashlib.sha256(uid.encode("utf-8")).hexdigest(), 16) % len(ROUNDS) + 1
+    return 1
+
+
+# ============================================================
+# Helpers
+# ============================================================
+
+def _find_section(round_no: int, section_id: int) -> QuestSectionSchema | None:
+    quest = QUESTS.get(round_no) or QUESTS[1]
+    for section in quest.sections:
+        if section.id == section_id:
+            return section
+    return None
+
+
+def _to_public(section: QuestSectionSchema) -> PublicQuestSection:
+    """Strip correct-answer flags and feedback text before sending to a client."""
+    return PublicQuestSection(
+        id=section.id,
+        type=section.type,
+        tag=section.tag,
+        question=section.question,
+        subtitle=section.subtitle,
+        options=(
+            [PublicQuestSectionOption(text=o.text) for o in section.options]
+            if section.options
+            else None
+        ),
+        binaryActions=section.binaryActions,
+        placeholder=section.placeholder,
+        minWords=section.minWords,
+        continueText=section.continueText,
+        choicePromptText=section.choicePromptText,
+        finishText=section.finishText,
+        letterBadges=section.letterBadges,
+    )
+
+
+# ============================================================
+# Endpoints
+# ============================================================
 
 @router.get("", response_model=QuestResponse)
 @router.get("/", response_model=QuestResponse, include_in_schema=False)
-async def get_quest():
+async def get_quest(round: int = Query(1, ge=1, le=2)):
+    """Legacy bulk endpoint — sanitized (no isCorrect / feedback leaked)."""
+    quest = QUESTS[round]
     return QuestResponse(
         status="success",
         message="Quest loaded successfully",
-        data=QUEST_DATA,
+        data=PublicQuestData(
+            questTitle=quest.questTitle,
+            totalSteps=quest.totalSteps,
+            sections=[_to_public(s) for s in quest.sections],
+        ),
+    )
+
+
+@router.get("/section", response_model=SectionFetchResponse)
+async def get_quest_section(
+    sectionId: int,
+    uid: str = "",
+    language: str = "en",
+    round: int | None = Query(None, ge=1, le=2, alias="round"),
+):
+    round_no = _resolve_round(uid, round)
+    quest = QUESTS[round_no]
+    section = _find_section(round_no, sectionId)
+    if section is None:
+        raise HTTPException(status_code=404, detail=f"Quest section {sectionId} not found in round {round_no}")
+
+    if uid:
+        await store_quest_progress(
+            uid=uid,
+            section_id=sectionId,
+            event="section_viewed",
+            language=language,
+            quest_round=round_no,
+        )
+    return SectionFetchResponse(
+        status="success",
+        questTitle=quest.questTitle,
+        totalSteps=quest.totalSteps,
+        section=_to_public(section),
+    )
+
+
+@router.post("/feedback", response_model=FeedbackResponse)
+async def quest_feedback(payload: FeedbackPayload):
+    round_no = _resolve_round(payload.uid, payload.round)
+    section = _find_section(round_no, payload.sectionId)
+    if section is None:
+        raise HTTPException(status_code=404, detail=f"Quest section {payload.sectionId} not found in round {round_no}")
+
+    is_correct = True
+    header = "Response Recorded"
+    message = "Your response has been recorded."
+
+    # Grade single-select answers server-side and return the feedback of the
+    # SPECIFIC option the user picked; binary/textarea get a neutral ack
+    if (
+        section.type == "single-select"
+        and section.options
+        and isinstance(payload.selectedOption, int)
+    ):
+        idx = payload.selectedOption
+        if 0 <= idx < len(section.options):
+            chosen = section.options[idx]
+            is_correct = chosen.isCorrect
+            fb = chosen.feedback or {}
+            header = fb.get("header", header)
+            message = fb.get("message", message)
+
+    await store_quest_progress(
+        uid=payload.uid,
+        section_id=payload.sectionId,
+        event="feedback",
+        language=payload.language,
+        selected_option=payload.selectedOption,
+        clicks_count=payload.clicksCount,
+        is_correct=is_correct,
+        timestamp=payload.timestamp,
+        quest_round=round_no,
+    )
+
+    return FeedbackResponse(
+        status="success",
+        isCorrect=is_correct,
+        header=header,
+        message=message,
     )
