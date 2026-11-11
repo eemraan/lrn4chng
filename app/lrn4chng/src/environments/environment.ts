@@ -7,7 +7,7 @@ export const environment = {
   emailApiUrl: 'https://api.lrn4chg.site/email',
   // Dev signing secret. The production secret must be injected at build time
   // (e.g. git-ignored file replacement) and must NOT be committed.
-  apiSecret: '075f9e70a5e8a2a14b13225a6ea422e12c52fb0cc43193c2e3b2d0f72c5ce049'
+  apiSecret: 'your key here'
 };
 
 /*
